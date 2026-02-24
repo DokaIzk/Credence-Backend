@@ -1,7 +1,8 @@
 import express from 'express'
+import { loadConfig } from './config/index.js'
 
+const config = loadConfig()
 const app = express()
-const PORT = process.env.PORT ?? 3000
 
 app.use(express.json())
 
@@ -32,6 +33,6 @@ app.get('/api/bond/:address', (req, res) => {
   })
 })
 
-app.listen(PORT, () => {
-  console.log(`Credence API listening on http://localhost:${PORT}`)
+app.listen(config.port, () => {
+  console.log(`Credence API listening on http://localhost:${config.port}`)
 })
