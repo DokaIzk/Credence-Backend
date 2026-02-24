@@ -1,4 +1,5 @@
 import express from 'express'
+import { setupVerificationRoutes } from './routes/verification'
 
 const app = express()
 const PORT = process.env.PORT ?? 3000
@@ -31,6 +32,9 @@ app.get('/api/bond/:address', (req, res) => {
     active: false,
   })
 })
+
+// Setup verification routes
+setupVerificationRoutes(app)
 
 app.listen(PORT, () => {
   console.log(`Credence API listening on http://localhost:${PORT}`)
