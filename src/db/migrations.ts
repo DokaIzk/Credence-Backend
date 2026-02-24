@@ -1,9 +1,9 @@
-import type Database from 'better-sqlite3'
+import type Database from "better-sqlite3";
 
 /**
  * Run all idempotent schema migrations.
- * Creates the `identities`, `attestations`, and `slash_events` tables
- * if they do not already exist. Safe to call multiple times.
+ * Creates the `identities`, `attestations`, `slash_events`, and `score_history`
+ * tables if they do not already exist. Safe to call multiple times.
  *
  * @param db - A better-sqlite3 Database instance.
  */
@@ -14,7 +14,7 @@ export function runMigrations(db: Database.Database): void {
       address    TEXT    NOT NULL UNIQUE,
       created_at TEXT    NOT NULL DEFAULT (datetime('now'))
     );
-  `)
+  `);
 
   db.exec(`
     CREATE TABLE IF NOT EXISTS attestations (
@@ -27,7 +27,7 @@ export function runMigrations(db: Database.Database): void {
       created_at  TEXT    NOT NULL DEFAULT (datetime('now')),
       FOREIGN KEY (identity_id) REFERENCES identities(id) ON DELETE CASCADE
     );
-  `)
+  `);
 
   db.exec(`
     CREATE TABLE IF NOT EXISTS slash_events (
@@ -40,5 +40,17 @@ export function runMigrations(db: Database.Database): void {
       created_at   TEXT    NOT NULL DEFAULT (datetime('now')),
       FOREIGN KEY (identity_id) REFERENCES identities(id) ON DELETE CASCADE
     );
-  `)
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS score_history (
+      id             INTEGER PRIMARY KEY AUTOINCREMENT,
+      identity_id    INTEGER NOT NULL,
+      score          REAL    NOT NULL,
+      snapshot_at    TEXT    NOT NULL DEFAULT (datetime('now')),
+      bond_snapshot   TEXT    NOT NULL DEFAULT '0',
+      created_at     TEXT    NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (identity_id) REFERENCES identities(id) ON DELETE CASCADE
+    );
+  `);
 }
