@@ -9,6 +9,7 @@
     "lint": "eslint src"
   },
   "dependencies": {
+    "@stellar/stellar-sdk": "^14.5.0",
     "express": "^4.18.2"
   },
   "devDependencies": {
