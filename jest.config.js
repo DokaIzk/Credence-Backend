@@ -16,4 +16,11 @@ export default {
       statements: 95,
     },
   },
+  globals: {
+    'ts-jest': {
+      tsconfig: {
+        module: 'CommonJS',
+      },
+    },
+  },
 }

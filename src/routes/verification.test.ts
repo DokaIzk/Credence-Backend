@@ -1,6 +1,6 @@
 import { verificationService } from '../services/verificationService'
 import type { VerificationProof, BondSnapshot } from '../types/verification'
-import crypto from 'crypto'
+import * as crypto from 'crypto'
 import express from 'express'
 import { setupVerificationRoutes } from './verification'
 import type { Application } from 'express'

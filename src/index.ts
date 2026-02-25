@@ -1,14 +1,16 @@
 import express from 'express'
 import { setupVerificationRoutes } from './routes/verification'
+import { createHealthRouter } from './routes/health.js'
+import { createDefaultProbes } from './services/health/probes.js'
+import bulkRouter from './routes/bulk'
 
 const app = express()
 const PORT = process.env.PORT ?? 3000
 
 app.use(express.json())
 
-app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', service: 'credence-backend' })
-})
+const healthProbes = createDefaultProbes()
+app.use('/api/health', createHealthRouter(healthProbes))
 
 app.get('/api/trust/:address', (req, res) => {
   const { address } = req.params
@@ -36,6 +38,14 @@ app.get('/api/bond/:address', (req, res) => {
 // Setup verification routes
 setupVerificationRoutes(app)
 
-app.listen(PORT, () => {
-  console.log(`Credence API listening on http://localhost:${PORT}`)
-})
+// Bulk verification endpoint (Enterprise)
+app.use('/api/bulk', bulkRouter)
+
+// Only start server if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`Credence API listening on http://localhost:${PORT}`)
+  })
+}
+
+export default app
