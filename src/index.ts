@@ -1,4 +1,6 @@
 import express from 'express'
+import { createHealthRouter } from './routes/health.js'
+import { createDefaultProbes } from './services/health/probes.js'
 import { validate } from './middleware/validate.js'
 import {
   trustPathParamsSchema,
@@ -13,10 +15,8 @@ const PORT = process.env.PORT ?? 3000
 
 app.use(express.json())
 
-/** Public: health check (no validation) */
-app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', service: 'credence-backend' })
-})
+const healthProbes = createDefaultProbes()
+app.use('/api/health', createHealthRouter(healthProbes))
 
 /** Public: trust score by address (path validation) */
 app.get(
