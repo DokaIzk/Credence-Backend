@@ -59,7 +59,7 @@ API runs at [http://localhost:3000](http://localhost:3000). The frontend proxies
 | `npm run build`      | Compile TypeScript       |
 | `npm start`          | Run compiled `dist/`     |
 | `npm run lint`       | Run ESLint               |
-| `npm test`           | Run tests                |
+| `npm test`           | Run test suite           |
 | `npm run test:coverage` | Run tests with coverage |
 
 ## API (current)
@@ -197,5 +197,11 @@ try {
 - Zod (env validation)
 - dotenv (.env file support)
 - Vitest (testing)
+
+## Stellar/Soroban Integration
+
+- Adapter implementation: `src/clients/soroban.ts`
+- Integration notes: `docs/stellar-integration.md`
+- Tests: `src/clients/soroban.test.ts`
 
 Extend with PostgreSQL, Redis, and Horizon event ingestion when implementing the full architecture.
