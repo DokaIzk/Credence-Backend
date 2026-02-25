@@ -1,6 +1,8 @@
 import express from 'express'
 import { createHealthRouter } from './routes/health.js'
 import { createDefaultProbes } from './services/health/probes.js'
+import bulkRouter from './routes/bulk.js'
+import { createAdminRouter } from './routes/admin/index.js'
 
 const app = express()
 const PORT = process.env.PORT ?? 3000
@@ -35,6 +37,9 @@ app.get('/api/bond/:address', (req, res) => {
 
 // Bulk verification endpoint (Enterprise)
 app.use('/api/bulk', bulkRouter)
+
+// Admin API endpoints (requires admin role)
+app.use('/api/admin', createAdminRouter())
 
 // Only start server if not in test environment
 if (process.env.NODE_ENV !== 'test') {
