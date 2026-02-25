@@ -126,10 +126,42 @@ State shape is `IdentityState`: `address`, `bondedAmount`, `bondStart`, `bondDur
 
 Tests cover: no drift (no update), single drift (one address corrected), full resync (multiple drifts), chain missing, store-only addresses, and error handling.
 
+## Monitoring
+
+Comprehensive monitoring with Prometheus and Grafana is available. See **[docs/monitoring.md](docs/monitoring.md)** for:
+
+- Metrics instrumentation guide
+- Grafana dashboard setup
+- Prometheus configuration
+- Alert rules
+- Deployment instructions
+
+Quick start:
+
+```bash
+# Install metrics dependency
+npm install prom-client
+
+# Start monitoring stack
+docker-compose up -d
+
+# Access services
+# - Prometheus: http://localhost:9090
+# - Grafana: http://localhost:3001 (admin/admin)
+# - Metrics endpoint: http://localhost:3000/metrics
+```
+
+The Grafana dashboard includes:
+- HTTP metrics (request rate, latency, error rate, status codes)
+- Infrastructure health (DB, Redis status and check duration)
+- Business metrics (reputation calculations, identity verifications, bulk operations)
+
 ## Tech
 
 - Node.js
 - TypeScript
 - Express
+- Prometheus (metrics)
+- Grafana (visualization)
 
 Extend with PostgreSQL, Redis, and Horizon event ingestion when implementing the full architecture.
