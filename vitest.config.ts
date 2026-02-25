@@ -2,18 +2,16 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
-    include: ['tests/**/*.test.ts'],
-    testTimeout: 120_000,
-    hookTimeout: 120_000,
+    include: ['src/**/*.test.ts'],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'lcov'],
-      include: ['src/db/**/*.ts'],
+      include: ['src/services/governance/**/*.ts'],
+      exclude: ['src/services/governance/index.ts', 'src/services/governance/types.ts'],
       thresholds: {
-        lines: 95,
-        functions: 95,
-        branches: 95,
         statements: 95,
+        branches: 95,
+        functions: 95,
+        lines: 95,
       },
     },
   },
