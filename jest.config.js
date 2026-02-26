@@ -17,7 +17,6 @@ export default {
       statements: 95,
     },
   },
-<<<<<<< HEAD
   globals: {
     'ts-jest': {
       tsconfig: {
@@ -26,7 +25,3 @@ export default {
     },
   },
 }
-=======
-  testMatch: ['**/__tests__/**/*.test.ts', '**/?(*.)+(spec|test).ts'],
-};
->>>>>>> 8592479742d5ea184eba9c4348f0e7fcc93665fd
