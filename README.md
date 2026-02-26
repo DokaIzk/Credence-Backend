@@ -68,11 +68,11 @@ curl http://localhost:3000/api/health
 
 ### Services
 
-| Service    | Port  | Description                  |
-|------------|-------|------------------------------|
-| `backend`  | 3000  | Express / TypeScript API     |
-| `postgres` | 5432  | PostgreSQL 16                |
-| `redis`    | 6379  | Redis 7                     |
+| Service    | Port  | Description              |
+|------------|-------|--------------------------|
+| `backend`  | 3000  | Express / TypeScript API |
+| `postgres` | 5432  | PostgreSQL 16            |
+| `redis`    | 6379  | Redis 7                  |
 
 All ports are configurable via `.env` (see `.env.example`).
 
@@ -110,70 +110,44 @@ docker compose exec postgres psql -U credence
 
 All configuration is driven by environment variables. Copy `.env.example` to `.env` and adjust as needed. Key variables:
 
-| Variable            | Default     | Description                |
-|---------------------|-------------|----------------------------|
-| `PORT`              | `3000`      | Backend listen port        |
-| `POSTGRES_USER`     | `credence`  | PostgreSQL user            |
-| `POSTGRES_PASSWORD` | `credence`  | PostgreSQL password        |
-| `POSTGRES_DB`       | `credence`  | PostgreSQL database name   |
-| `POSTGRES_PORT`     | `5432`      | Host-exposed PG port       |
-| `REDIS_PORT`        | `6379`      | Host-exposed Redis port    |
-| `DATABASE_URL`      | (composed)  | Full PG connection string  |
-| `REDIS_URL`         | (composed)  | Full Redis connection URL  |
+| Variable            | Default    | Description               |
+|---------------------|------------|---------------------------|
+| `PORT`              | `3000`     | Backend listen port       |
+| `POSTGRES_USER`     | `credence` | PostgreSQL user           |
+| `POSTGRES_PASSWORD` | `credence` | PostgreSQL password       |
+| `POSTGRES_DB`       | `credence` | PostgreSQL database name  |
+| `POSTGRES_PORT`     | `5432`     | Host-exposed PG port      |
+| `REDIS_PORT`        | `6379`     | Host-exposed Redis port   |
+| `DATABASE_URL`      | (composed) | Full PG connection string |
+| `REDIS_URL`         | (composed) | Full Redis connection URL |
 
 ---
 
 ## Scripts
 
-| Command                 | Description              |
-|-------------------------|---------------------------|
-| `npm run dev`           | Start with tsx watch     |
-| `npm run build`         | Compile TypeScript       |
-| `npm start`             | Run compiled `dist/`     |
-| `npm run lint`          | Run ESLint               |
-| `npm test`              | Run tests                |
-| `npm run test:watch`    | Run tests in watch mode  |
-| `npm run test:coverage` | Run tests with coverage  |
-| Command              | Description                  |
-|----------------------|------------------------------|
-| `npm run dev`        | Start with tsx watch         |
-| `npm run build`      | Compile TypeScript           |
-| `npm start`          | Run compiled `dist/`         |
-| `npm run lint`       | Run ESLint                   |
-| `npm test`           | Run tests (vitest)           |
-| `npm run test:watch` | Run tests in watch mode      |
-| `npm run test:coverage` | Run tests with coverage   |
-| Command              | Description              |
-|----------------------|--------------------------|
-| `npm run dev`        | Start with tsx watch     |
-| `npm run build`      | Compile TypeScript       |
-| `npm start`          | Run compiled `dist/`     |
-| `npm run lint`       | Run ESLint               |
-| `npm run test`       | Run tests                |
-| `npm test`           | Run test suite           |
-| `npm run test:coverage` | Run tests with coverage |
+| Command                  | Description                    |
+|--------------------------|--------------------------------|
+| `npm run dev`            | Start with tsx watch           |
+| `npm run build`          | Compile TypeScript             |
+| `npm start`              | Run compiled `dist/`           |
+| `npm run lint`           | Run ESLint                     |
+| `npm test`               | Run test suite (vitest)        |
+| `npm run test:watch`     | Run tests in watch mode        |
+| `npm run test:coverage`  | Run tests with coverage        |
 
 ## API (current)
 
-| Method | Path               | Description        |
-|--------|--------------------|--------------------|
-| GET    | `/api/health`      | Health check       |
-| GET    | `/api/health/cache` | Redis cache health check |
-| GET    | `/api/trust/:address` | Trust score (stub) |
-| GET    | `/api/bond/:address`   | Bond status (stub) |
-| Method | Path                    | Description            |
-|--------|-------------------------|------------------------|
-| Method | Path                         | Description              |
-|--------|------------------------------|---------------------------|
-| GET    | `/api/health`           | Health check           |
-| GET    | `/api/trust/:address`   | Trust score            |
-| GET    | `/api/bond/:address`    | Bond status (stub)     |
-| GET    | `/api/attestations/:address` | List attestations |
-| POST   | `/api/attestations`      | Create attestation     |
+| Method | Path                          | Description                        |
+|--------|-------------------------------|------------------------------------|
+| GET    | `/api/health`                 | Health check                       |
+| GET    | `/api/health/cache`           | Redis cache health check           |
+| GET    | `/api/trust/:address`         | Trust score from reputation engine |
+| GET    | `/api/bond/:address`          | Bond status                        |
+| GET    | `/api/attestations/:address`  | List attestations for address      |
+| POST   | `/api/attestations`           | Create attestation                 |
+| GET    | `/api/verification/:address`  | Verification proof (stub)          |
 
 Invalid input returns **400** with `{ "error": "Validation failed", "details": [{ "path", "message" }] }`. See [docs/VALIDATION.md](docs/VALIDATION.md).
-| GET    | `/api/attestations/:address` | Attestations (stub)      |
-| GET    | `/api/verification/:address` | Verification proof (stub)|
 
 Full request/response documentation, cURL examples, and import instructions:
 **[docs/api.md](docs/api.md)**
@@ -216,7 +190,7 @@ Response shape (readiness):
 
 `status` may be `ok`, `degraded` (optional external down), or `unhealthy` (critical dependency down). Each dependency `status` is `up`, `down`, or `not_configured`. Optional env: `DATABASE_URL`, `REDIS_URL` to enable DB and Redis checks.
 
-### Testing
+#### Testing
 
 Health endpoints are covered by unit and route tests. Run:
 
@@ -255,9 +229,11 @@ The service includes a Redis-based caching layer with:
 - **Graceful fallback** - Continues working when Redis is unavailable
 
 See [docs/caching.md](./docs/caching.md) for detailed documentation.
+
 ## Developer SDK
 
 A TypeScript/JavaScript SDK is available at `src/sdk/` for programmatic access to the API. See [docs/sdk.md](docs/sdk.md) for full documentation.
+
 ## Configuration
 
 The config module (`src/config/index.ts`) centralizes all environment handling:
@@ -294,39 +270,35 @@ try {
 
 ## Environment Variables
 
-| Variable | Required | Default | Description |
-|---|---|---|---|
-| `PORT` | No | `3000` | Server port (1–65535) |
-| `NODE_ENV` | No | `development` | `development`, `production`, or `test` |
-| `LOG_LEVEL` | No | `info` | `debug`, `info`, `warn`, or `error` |
-| `DB_URL` | **Yes** | — | PostgreSQL connection URL |
-| `REDIS_URL` | **Yes** | — | Redis connection URL |
-| `JWT_SECRET` | **Yes** | — | JWT signing secret (≥ 32 chars) |
-| `JWT_EXPIRY` | No | `1h` | JWT token lifetime |
-| `ENABLE_TRUST_SCORING` | No | `false` | Enable trust scoring feature |
-| `ENABLE_BOND_EVENTS` | No | `false` | Enable bond event processing |
-| `HORIZON_URL` | No | — | Stellar Horizon API URL |
-| `CORS_ORIGIN` | No | `*` | Allowed CORS origin |
+| Variable               | Required   | Default        | Description                              |
+|------------------------|------------|----------------|------------------------------------------|
+| `PORT`                 | No         | `3000`         | Server port (1–65535)                    |
+| `NODE_ENV`             | No         | `development`  | `development`, `production`, or `test`   |
+| `LOG_LEVEL`            | No         | `info`         | `debug`, `info`, `warn`, or `error`      |
+| `DB_URL`               | **Yes**    | —              | PostgreSQL connection URL                |
+| `REDIS_URL`            | **Yes**    | —              | Redis connection URL                     |
+| `JWT_SECRET`           | **Yes**    | —              | JWT signing secret (≥ 32 chars)          |
+| `JWT_EXPIRY`           | No         | `1h`           | JWT token lifetime                       |
+| `ENABLE_TRUST_SCORING` | No         | `false`        | Enable trust scoring feature             |
+| `ENABLE_BOND_EVENTS`   | No         | `false`        | Enable bond event processing             |
+| `HORIZON_URL`          | No         | —              | Stellar Horizon API URL                  |
+| `CORS_ORIGIN`          | No         | `*`            | Allowed CORS origin                      |
 
 ## Tech
 
 - Node.js
 - TypeScript
 - Express
-- Zod (request validation)
-- Redis (caching layer)
-- Vitest (testing)
-- Zod (env validation)
+- Zod (request validation + env validation)
+- Redis / ioredis (caching layer)
 - dotenv (.env file support)
-- Vitest (testing)
+- Vitest + Supertest (testing)
 
 ## Stellar/Soroban Integration
 
 - Adapter implementation: `src/clients/soroban.ts`
 - Integration notes: `docs/stellar-integration.md`
 - Tests: `src/clients/soroban.test.ts`
-
-Extend with PostgreSQL, Redis, and Horizon event ingestion when implementing the full architecture.
 
 ## Integration tests
 
@@ -335,4 +307,3 @@ Repository integration tests are under `tests/integration/` and execute against 
 - Use Docker/Testcontainers automatically: `npm run test:integration`
 - Use an existing DB in CI: `TEST_DATABASE_URL=postgresql://... npm run test:integration`
 - Coverage report: `npm run coverage`
-Extend with PostgreSQL and Horizon event ingestion when implementing the full architecture.
