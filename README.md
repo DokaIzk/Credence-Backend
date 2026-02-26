@@ -4,9 +4,11 @@ API and services for the Credence economic trust protocol. Provides health check
 
 ## About
 
-This service is part of [Credence](../README.md). It will support:
+This service is part of [Credence](../README.md). It supports:
 
 - Public query API (trust score, bond status, attestations)
+- Horizon listener for bond withdrawal events
+- Redis-based caching layer
 - **Horizon listener / identity state sync** – Reconciles DB with on-chain bond state (see [Identity state sync](#identity-state-sync)).
 - Reputation engine (off-chain score from bond data) (future)
 
@@ -15,6 +17,8 @@ This service is part of [Credence](../README.md). It will support:
 - Node.js 18+
 - npm or pnpm
 - Redis server (for caching)
+- Stellar Horizon server (for blockchain events)
+- @stellar/stellar-sdk (Stellar blockchain integration)
 - Docker & Docker Compose (for containerised dev)
 
 ## Setup
@@ -23,6 +27,10 @@ This service is part of [Credence](../README.md). It will support:
 npm install
 # Set Redis URL in environment
 export REDIS_URL=redis://localhost:6379
+# Set Horizon URL for blockchain events
+export HORIZON_URL=https://horizon-testnet.stellar.org
+# Set Stellar network passphrase
+export STELLAR_NETWORK_PASSPHRASE="Test SDF Network ; September 2015"
 cp .env.example .env
 # Edit .env with your actual values
 ```
@@ -218,6 +226,17 @@ State shape is `IdentityState`: `address`, `bondedAmount`, `bondStart`, `bondDur
 
 Tests cover: no drift (no update), single drift (one address corrected), full resync (multiple drifts), chain missing, store-only addresses, and error handling.
 
+## Horizon Listener
+
+The service includes a Horizon withdrawal events listener that:
+
+- **Monitors Stellar blockchain** for withdrawal transactions affecting bonds
+- **Updates bond states** (amount, active status) based on on-chain events
+- **Creates score history snapshots** for significant withdrawals
+- **Maintains consistency** between on-chain and database states
+- **Handles errors gracefully** with automatic retry and recovery
+
+See [docs/horizon-listener.md](./docs/horizon-listener.md) for detailed documentation.
 ## Caching
 
 The service includes a Redis-based caching layer with:
@@ -289,6 +308,13 @@ try {
 - Node.js
 - TypeScript
 - Express
+- Redis (caching layer)
+- @stellar/stellar-sdk (Stellar blockchain integration)
+- Vitest (testing)
+
+Extend with PostgreSQL and additional Horizon event ingestion when implementing the full architecture.
+- Vitest (testing)
+- Zod (env validation)
 - Zod (request validation + env validation)
 - Redis / ioredis (caching layer)
 - dotenv (.env file support)
