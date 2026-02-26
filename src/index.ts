@@ -3,8 +3,8 @@ import { createHealthRouter } from './routes/health.js'
 import { createDefaultProbes } from './services/health/probes.js'
 import bulkRouter from './routes/bulk.js'
 import { createAdminRouter } from './routes/admin/index.js'
+import app from './app.js'
 
-const app = express()
 const PORT = process.env.PORT ?? 3000
 
 app.use(express.json())
@@ -48,4 +48,5 @@ if (process.env.NODE_ENV !== 'test') {
   })
 }
 
+export { app }
 export default app
